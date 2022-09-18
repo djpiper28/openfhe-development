@@ -63,7 +63,7 @@ TEST(UnitTestFHEWGINX, EvalArbFunc) {
         LWEPlaintext result;
 
         cc.Decrypt(sk, ct_cube, &result, p);
-
+        //        std::cerr << "i: " << i << ", f=" << fp(i, p).ConvertToInt() << ", r=" << result << std::endl;
         std::string failed = "Arbitrary Function Evaluation failed";
         EXPECT_EQ(uint(fp(i, p).ConvertToInt()), result) << failed;
     }
@@ -104,8 +104,8 @@ TEST(UnitTestFHEWGINX, EvalSignFuncTime) {
     int q      = 4096;
     int factor = 1 << int(29 - log2(q));
     int p      = cc.GetMaxPlaintextSpace().ConvertToInt();
-    auto sk    = cc.KeyGen(Q);
-    cc.BTKeyGen(sk, Q);
+    auto sk    = cc.KeyGen();
+    cc.BTKeyGen(sk);
 
     std::string failed = "Large Precision Sign Evalution failed";
 
@@ -113,7 +113,7 @@ TEST(UnitTestFHEWGINX, EvalSignFuncTime) {
         auto ct1 = cc.Encrypt(sk, p * factor / 2 + i - 3, FRESH, p * factor, Q);
         ct1      = cc.EvalSign(ct1);
         LWEPlaintext result;
-        cc.Decrypt(sk, ct1, &result, 2, q);
+        cc.Decrypt(sk, ct1, &result, 2);
         EXPECT_EQ(uint(i >= 3), result) << failed;
     }
 }
@@ -127,8 +127,8 @@ TEST(UnitTestFHEWGINX, EvalSignFuncSpace) {
     int q      = 4096;
     int factor = 1 << int(29 - log2(q));
     int p      = cc.GetMaxPlaintextSpace().ConvertToInt();
-    auto sk    = cc.KeyGen(Q);
-    cc.BTKeyGen(sk, Q);
+    auto sk    = cc.KeyGen();
+    cc.BTKeyGen(sk);
 
     std::string failed = "Large Precision Sign Evalution failed";
 
@@ -136,7 +136,7 @@ TEST(UnitTestFHEWGINX, EvalSignFuncSpace) {
         auto ct1 = cc.Encrypt(sk, p * factor / 2 + i - 3, FRESH, p * factor, Q);
         ct1      = cc.EvalSign(ct1);
         LWEPlaintext result;
-        cc.Decrypt(sk, ct1, &result, 2, q);
+        cc.Decrypt(sk, ct1, &result, 2);
         EXPECT_EQ(uint(i >= 3), result) << failed;
     }
 }
@@ -152,8 +152,8 @@ TEST(UnitTestFHEWGINX, EvalDigitDecompTime) {
     int p_basic = cc.GetMaxPlaintextSpace().ConvertToInt();
     auto st     = p_basic * factor / 2 - 3;
     // Generate the secret key
-    auto sk = cc.KeyGen(Q);
-    cc.BTKeyGen(sk, Q);
+    auto sk = cc.KeyGen();
+    cc.BTKeyGen(sk);
     std::string failed = "Large Precision Ciphertext Decomposition failed";
 
     for (int i = st; i < st + 8; i++) {
@@ -163,7 +163,7 @@ TEST(UnitTestFHEWGINX, EvalDigitDecompTime) {
         ct1         = decomp[1];
 
         LWEPlaintext result;
-        cc.Decrypt(sk, ct1, &result, p_basic, basic);
+        cc.Decrypt(sk, ct1, &result, p_basic);
         if (i < st + 3)
             EXPECT_EQ(uint(15), result) << failed;
         else
@@ -183,8 +183,8 @@ TEST(UnitTestFHEWGINX, EvalDigitDecompSpace) {
     int p_basic = cc.GetMaxPlaintextSpace().ConvertToInt();
     auto st     = p_basic * factor / 2 - 3;
     // Generate the secret key
-    auto sk = cc.KeyGen(Q);
-    cc.BTKeyGen(sk, Q);
+    auto sk = cc.KeyGen();
+    cc.BTKeyGen(sk);
     std::string failed = "Large Precision Ciphertext Decomposition failed";
 
     for (int i = st; i < st + 8; i++) {
@@ -194,7 +194,7 @@ TEST(UnitTestFHEWGINX, EvalDigitDecompSpace) {
         ct1         = decomp[1];
 
         LWEPlaintext result;
-        cc.Decrypt(sk, ct1, &result, p_basic, basic);
+        cc.Decrypt(sk, ct1, &result, p_basic);
         if (i < st + 3)
             EXPECT_EQ(uint(15), result) << failed;
         else
